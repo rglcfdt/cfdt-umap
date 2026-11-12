@@ -40,7 +40,7 @@ services:
       STATIC_ROOT: /srv/umap/static
       MEDIA_ROOT: /srv/umap/uploads
 
-    PYTHONPATH: /srv/umap/custom
+      PYTHONPATH: /srv/umap/custom
 
     volumes:
       - ./uploads:/srv/umap/uploads
