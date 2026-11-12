@@ -26,7 +26,7 @@ services:
       - redis
 
     environment:
-      DATABASE_URL: postgis://umap:CHANGE_ME@db/umap
+      DATABASE_URL: postgis://umap:${POSTGRES_PASSWORD}@db/umap
 
       SECRET_KEY: ${UMAP_SECRET_KEY}
 
