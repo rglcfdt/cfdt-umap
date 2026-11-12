@@ -1,49 +1,64 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -Eeuo pipefail
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
 
 echo "========================================"
 echo " Création administrateur uMap"
 echo "========================================"
 echo
 
-# Vérification de Docker
+# Vérification Docker
 if ! command -v docker >/dev/null 2>&1; then
     echo "ERREUR : Docker n'est pas installé ou accessible."
     exit 1
 fi
 
-# Recherche d'un conteneur uMap actif
-UMAP_CONTAINER=$(
-    docker ps \
-        --format '{{.Names}} {{.Image}}' |
-    awk 'tolower($0) ~ /umap/ {print $1; exit}'
-)
-
-if [ -z "${UMAP_CONTAINER}" ]; then
-    echo "ERREUR : aucun conteneur uMap actif détecté."
-    echo
-    echo "Conteneurs actuellement démarrés :"
-    docker ps --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}'
+# Vérification Docker Compose
+if ! docker compose version >/dev/null 2>&1; then
+    echo "ERREUR : Docker Compose n'est pas disponible."
     exit 1
 fi
 
-echo "Conteneur uMap détecté : ${UMAP_CONTAINER}"
+cd "${PROJECT_DIR}"
+
+if [[ ! -f "compose.yaml" ]]; then
+    echo "ERREUR : compose.yaml introuvable dans :"
+    echo "${PROJECT_DIR}"
+    exit 1
+fi
+
+if [[ ! -f ".env" ]]; then
+    echo "ERREUR : fichier .env introuvable."
+    exit 1
+fi
+
+# Vérification du service uMap
+if ! docker compose ps --status running app --quiet | grep -q .; then
+    echo "ERREUR : le service uMap 'app' n'est pas démarré."
+    echo
+    docker compose ps
+    exit 1
+fi
+
+echo "Instance uMap : ${PROJECT_DIR}"
+echo "Service Docker : app"
 echo
 
 echo "Lancement de la création du superutilisateur..."
 echo
-echo "Vous allez maintenant saisir les informations"
-echo "du compte administrateur."
+echo "Saisissez maintenant les informations du compte administrateur."
 echo
 
-docker exec -it "${UMAP_CONTAINER}" umap createsuperuser
+docker compose exec app umap createsuperuser
 
 echo
 echo "========================================"
-echo " Création terminée"
+echo " Superutilisateur créé"
 echo "========================================"
 echo
-echo "Administration uMap :"
+echo "Administration :"
 echo "https://carto.cfdt.bzh/admin/"
 echo
