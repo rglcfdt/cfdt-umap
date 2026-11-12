@@ -34,6 +34,8 @@ services:
       CSRF_TRUSTED_ORIGINS: https://carto.cfdt.bzh
 
       REDIS_URL: redis://redis:6379
+      
+      ENABLE_ACCOUNT_LOGIN: "1"
 
       UMAP_DEMO_SITE: "False"
       UMAP_ALLOW_ANONYMOUS: "False"
