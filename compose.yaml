@@ -31,6 +31,7 @@ services:
       SECRET_KEY: ${UMAP_SECRET_KEY}
 
       SITE_URL: https://carto.cfdt.bzh
+      CSRF_TRUSTED_ORIGINS: https://carto.cfdt.bzh
 
       REDIS_URL: redis://redis:6379
 
@@ -52,3 +53,4 @@ volumes:
   db:
   data:
   static:
+
