@@ -1,0 +1,27 @@
+# Environnement
+.env
+.env.*
+!.env.example
+
+# Secrets et certificats
+*.pem
+*.key
+*.crt
+secrets/
+
+# Données
+data/
+backups/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

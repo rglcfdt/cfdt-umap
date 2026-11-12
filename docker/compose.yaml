@@ -1,0 +1,54 @@
+services:
+
+  redis:
+    image: docker.io/redis:latest
+    restart: unless-stopped
+
+  db:
+    image: docker.io/postgis/postgis:14-3.3-alpine
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: umap
+      POSTGRES_USER: umap
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    volumes:
+      - db:/var/lib/postgresql/data
+
+  app:
+    image: docker.io/umap/umap:3.6.3
+
+    restart: unless-stopped
+
+    depends_on:
+      - db
+      - redis
+
+    environment:
+      DATABASE_URL: postgis://umap:CHANGE_ME@db/umap
+
+      SECRET_KEY: ${UMAP_SECRET_KEY}
+
+      SITE_URL: https://carto.cfdt.bzh
+
+      REDIS_URL: redis://redis:6379
+
+      UMAP_DEMO_SITE: "False"
+      UMAP_ALLOW_ANONYMOUS: "False"
+
+      STATIC_ROOT: /srv/umap/static
+      MEDIA_ROOT: /srv/umap/uploads
+
+    volumes:
+      - ./uploads:/srv/umap/uploads
+      - ./static:/srv/umap/static
+      - /opt/cfdt/data/umap:/opt/cfdt/data/umap
+
+    ports:
+      - "127.0.0.1:3000:8000"
+
+volumes:
+  db:
+  data:
+  static:
