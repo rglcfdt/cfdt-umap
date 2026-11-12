@@ -41,11 +41,25 @@ class SyndicatReadOnlyMiddleware:
             return None
 
         if resolver_match.url_name in BLOCKED_URL_NAMES:
-            return HttpResponseForbidden(
-                "Votre compte est configuré en lecture seule. "
-                "Vous pouvez consulter les cartes qui vous sont attribuées, "
-                "mais vous ne pouvez pas créer de nouvelle carte.",
-                content_type="text/plain; charset=utf-8",
-            )
+
+            # Aucun visiteur anonyme ne peut créer une carte.
+            if not user.is_authenticated:
+                return HttpResponseForbidden(
+                    "Vous devez être connecté pour créer une carte.",
+                    content_type="text/plain; charset=utf-8",
+                )
+
+            # Les superadmins restent autorisés.
+            if user.is_superuser:
+                return None
+
+            # Les comptes syndicats sont en lecture seule.
+            if user.groups.filter(name=READONLY_GROUP).exists():
+                return HttpResponseForbidden(
+                    "Votre compte est configuré en lecture seule. "
+                    "Vous pouvez consulter les cartes qui vous sont attribuées, "
+                    "mais vous ne pouvez pas créer de nouvelle carte.",
+                    content_type="text/plain; charset=utf-8",
+                )
 
         return None
