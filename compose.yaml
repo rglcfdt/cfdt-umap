@@ -49,6 +49,7 @@ services:
 
       - ./custom/umap.conf:/etc/umap/umap.conf:ro
       - ./custom/cfdt_readonly:/srv/umap/custom/cfdt_readonly:ro
+      - ./custom/templates:/srv/umap/custom/templates:ro
 
     ports:
       - "127.0.0.1:3000:8000"
