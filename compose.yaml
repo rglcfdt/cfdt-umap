@@ -17,7 +17,7 @@ services:
       - db:/var/lib/postgresql/data
 
   app:
-    image: docker.io/umap/umap:3.6.3
+    image: cfdt-umap:3.6.3-1
     restart: unless-stopped
 
     depends_on:
